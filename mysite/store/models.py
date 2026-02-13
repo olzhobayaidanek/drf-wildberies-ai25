@@ -53,8 +53,17 @@ class Product(models.Model):
      def __str__(self):
          return f'{self.sub_category}: {self.product_name}'
 
+     def get_avg_rating(self):
+         reviews = self.reviews.all()
+         if reviews.exists():
+             return sum([i.stars for i in reviews]) / reviews.count()
+         return 0
 
-
+     def get_count_rating(self):
+         reviews = self.reviews.all()
+         if reviews.exists():
+             return reviews.count()
+         return 0
 
 class ImageProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='image_product')
@@ -62,9 +71,9 @@ class ImageProduct(models.Model):
 
 class Review(models.Model):
     user = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    images = models.ImageField(upload_to='review_images/')
-    video = models.FileField(upload_to='review_videos/')
+    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='reviews')
+    images = models.ImageField(upload_to='review_images/', null=True,blank=True)
+    video = models.FileField(upload_to='review_videos/', null=True,blank=True)
     stars = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5)])
     comment = models.TextField(null=True,blank=True)
 

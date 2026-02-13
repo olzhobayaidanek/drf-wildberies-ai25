@@ -75,12 +75,21 @@ class ProductSerializers(serializers.ModelSerializer) :
     category = CategoryListSerializers()
     sub_category = SubcategoryListSerializers()
     image_product = ImageProductSerializers(read_only=True, many=True)
+    get_avg_rating = serializers.SerializerMethodField()
+    get_count_rating = serializers.SerializerMethodField()
 
 
     class Meta:
         model = Product
         fields = ['id','category','sub_category','product_name',
-                  'product_image','price','description','image_product']
+                  'get_avg_rating','get_count_rating','product_image','price','description','image_product']
+
+    def get_avg_rating(self,obj):
+        return obj.get_avg_rating()
+
+    def get_count_rating(self,obj):
+        return obj.get_count_rating()
+
 
 class SubcategoryDetailSerializers(serializers.ModelSerializer) :
     sub_products = ProductSerializers(read_only=True, many=True)
